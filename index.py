@@ -20,9 +20,9 @@ for fileid in movie_reviews.fileids(category)]
 
 random.shuffle(training)
 
-print(training[1])
+#print(training[1])
 
-#stopwords to skip over
+#stopwords to skip overconda
 stop_words = set(stopwords.words("english"))
 
 #stemming
@@ -46,21 +46,39 @@ xml_descs = soup.find_all('description')
 
 #Looks at the text of each individual title tag and breaks it apart into a list of words
 #Filters words to exclude neutral words such as "and"
+fwords = []
 for title in xml_titles:
     t_words = word_tokenize(title.text)
-    fwords = []
-    for word in t_words:
+    
+    #print(title.text)
+    text = nltk.word_tokenize(title.text)
+    #print(text)
+    
+    for word in text:
         if word not in stop_words:
-            fwords.append(lemmatizer.lemmatize(word))
-    #print(fwords)
+            fwords.append((word.lower()))
+#print frequency 
+
+    
 #Used NLTK to split words instead of split so that words like "wasn't" are split into "was" and "n't" and other utilities
 
 
 #Looks at the text of each individual description tag and breaks it apart into a list of words
 for desc in xml_descs:
-    d_words = desc.text.split()
+    d_words = word_tokenize(desc.text)
+    
+    #print(title.text)
+    text = nltk.word_tokenize(desc.text)
+    #print(text)
+    
+    for word in text:
+        if word not in stop_words:
+            fwords.append((word.lower()))
     #print(d_words)
+fwords = nltk.FreqDist(fwords)
+print(fwords.most_common(300))
 
+words_in_database = []
 
 #look into lemmatizers
 
