@@ -38,7 +38,6 @@ class VoteClassifier(ClassifierI):
       votes.append(v)
     cvotes = votes.count(mode(votes))
     return cvotes/len(votes)
-
 short_pos = io.open("./Downloads/positive_reviews.txt", encoding='latin-1')
 short_neg = io.open("./Downloads/negative_reviews.txt", encoding='latin-1')
 short_pos = short_pos.read()
@@ -126,7 +125,7 @@ print("Classification: ", vc.classify(testing[4][0]), "Confidence: ", vc.confide
 def sentiment_classify(text):
     feats = find_features(text)
     return vc.classify(feats), vc.confidence(feats) 
-
+ 
 #stopwords to skip over
 stop_words = set(stopwords.words("english"))
 
@@ -166,21 +165,35 @@ for title in xml_titles:
         #if word not in stop_words:
         fwords += " " + str((word.lower()))
     print(fwords)
-    print(sentiment_classify(fwords))
-    if vc.classify == "neg":
+    temp = sentiment_classify(fwords)
+    print(temp)
+    if temp[0] == "neg":
         database["universal"]-=1
     else:
         database['universal']+=1
 
     #print(fwords)
 #Used NLTK to split words instead of split so that words like "wasn't" are split into "was" and "n't" and other utilities
-
+print("Universal val before descriptions: ", database['universal'])
+print("\n\n\n")
 
 #Looks at the text of each individual description tag and breaks it apart into a list of words
-'''
 for desc in xml_descs:
-    d_words = desc.text.split()
-'''
-    #print(d_words)
+    dwords = ""
+    text = nltk.word_tokenize(desc.text)
+    
+    
+    for word in text:
+        #if word not in stop_words:
+        dwords += " " + str((word.lower()))
+    print(dwords)
+    temp = sentiment_classify(dwords)
+    print(temp)
+    if temp[0] == "neg":
+        database["universal"]-=1
+    else:
+        database['universal']+=1
+print("Universal val after descriptions: ", database["universal"])
+
 
 
