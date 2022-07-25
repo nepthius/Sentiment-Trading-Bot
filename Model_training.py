@@ -39,6 +39,7 @@ class VoteClassifier(ClassifierI):
     cvotes = votes.count(mode(votes))
     return cvotes/len(votes)
 
+
 short_pos = io.open("./Downloads/positive_reviews.txt", encoding='latin-1')
 short_neg = io.open("./Downloads/negative_reviews.txt", encoding='latin-1')
 short_pos = short_pos.read()
@@ -66,7 +67,7 @@ all_words = nltk.FreqDist(all_words)
 word_features = list(all_words.keys())[:5000]
 
 def find_features(document):
-  words = word+tokenize(document)
+  words = word_tokenize(document)
   features = {}
   for w in word_features:
     features[w] = (w in words)
@@ -81,11 +82,10 @@ testing = featuresets[10000:]
 MNB = SklearnClassifier(MultinomialNB())
 Bernoulli = SklearnClassifier(BernoulliNB())
 LR = SklearnClassifier(LogisticRegression())
-SGDC = SklearnClassifier(SGDClassifier())
 LinearSVC = SklearnClassifier(LinearSVC())
 NuSVC = SklearnClassifier(NuSVC())
 
-classifiers = [MNB, nltk.NaiveBayesClassifier.train(training), Bernoulli, LR, SGDC, LinearSVC, NuSVC]
+classifiers = [MNB, Bernoulli, LR, LinearSVC, NuSVC]
 
 #trains classifier and prints accuracy
 def print_acc(classifier, testing):
@@ -105,6 +105,43 @@ print("Classification: ", vc.classify(testing[0][0]), "Confidence: ", vc.confide
 print("Classification: ", vc.classify(testing[2][0]), "Confidence: ", vc.confidence(testing[2][0]))
 print("Classification: ", vc.classify(testing[3][0]), "Confidence: ", vc.confidence(testing[3][0]))
 print("Classification: ", vc.classify(testing[4][0]), "Confidence: ", vc.confidence(testing[4][0]))
+
+
+save_MNB = open("MNB.pickle", "wb")
+pickle.dump(MNB, save_MNB)
+save_MNB.close()
+
+save_Bernoulli = open("Bernoulli.pickle", "wb")
+pickle.dump(Bernoulli, save_Bernoulli)
+save_Bernoulli.close()
+
+save_LR = open("LR.pickle", "wb")
+pickle.dump(LR, save_LR)
+save_LR.close()
+
+save_LinearSVC = open("LinearSVC.pickle", "wb")
+pickle.dump(LinearSVC, save_LinearSVC)
+save_LinearSVC.close()
+
+save_NuSVC = open("NuSVC.pickle", "wb")
+pickle.dump(NuSVC, save_NuSVC)
+save_NuSVC.close()
+
+save_documents = open("documents.pickle", "wb")
+pickle.dump(documents, save_documents)
+save_documents.close()
+
+save_allwords = open("allwords.pickle", "wb")
+pickle.dump(all_words, save_allwords)
+save_allwords.close()
+
+save_wordf = open("wordf.pickle", "wb")
+pickle.dump(word_features, save_wordf)
+save_wordf.close() 
+
+save_featuresets = open("featuresets.pickle", "wb")
+pickle.dump(featuresets, save_featuresets)
+save_featuresets.close()
 
 
 
