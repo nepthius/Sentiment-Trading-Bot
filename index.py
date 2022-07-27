@@ -203,7 +203,7 @@ database = {"universal":0,
 #Looks at the text of each individual title tag and breaks it apart into a list of words
 #Filters words to exclude neutral words such as "and"
 
-
+val = 0
 for title in xml_titles:
     fwords = ""
     t_words = word_tokenize(title.text)
@@ -211,38 +211,75 @@ for title in xml_titles:
     #print(title.text)
     text = nltk.word_tokenize(title.text)
     #print(text)
-    
+    itemp = {}
     for word in text:
-        #if word not in stop_words:
-        fwords += " " + str((word.lower()))
+        if word not in stop_words:
+            fwords += " " + str((word.lower()))
+            word = word.lower()
+            for key, value in industry_vals.items():
+                for items in value:
+                    #print(items[0])
+                    #print(word)
+                    if items[0] == word:
+                        if key not in itemp.keys():
+                            itemp[key] = items[1]
+                        else:
+                            itemp[key] += items[1]
     print(fwords)
     temp = sentiment_classify(fwords)
     print(temp)
     if temp[0] == "neg":
         database["universal"]-=1
+        for key, value in itemp.items():
+            itemp[key] *= -1
     else:
         database['universal']+=1
+    for key, value in itemp.items():
+        database[key] += value
+    #val +=1
+    #if val == 1:
+        #break
 
+print("before descriptions: ", database)
     #print(fwords)
 #Used NLTK to split words instead of split so that words like "wasn't" are split into "was" and "n't" and other utilities
-print("Universal val before descriptions: ", database['universal'])
 print("\n\n\n")
 
 #Looks at the text of each individual description tag and breaks it apart into a list of words
+
 for desc in xml_descs:
-    dwords = ""
+    fwords = ""
+    t_words = word_tokenize(desc.text)
+    
+    #print(title.text)
     text = nltk.word_tokenize(desc.text)
-    
-    
+    #print(text)
+    itemp = {}
     for word in text:
-        #if word not in stop_words:
-        dwords += " " + str((word.lower()))
-    print(dwords)
-    temp = sentiment_classify(dwords)
+        if word not in stop_words:
+            fwords += " " + str((word.lower()))
+            word = word.lower()
+            for key, value in industry_vals.items():
+                for items in value:
+                    #print(items[0])
+                    #print(word)
+                    if items[0] == word:
+                        if key not in itemp.keys():
+                            itemp[key] = items[1]
+                        else:
+                            itemp[key] += items[1]
+    print(fwords)
+    temp = sentiment_classify(fwords)
     print(temp)
     if temp[0] == "neg":
         database["universal"]-=1
+        for key, value in itemp.items():
+            itemp[key] *= -1
     else:
         database['universal']+=1
-print("Universal val after descriptions: ", database["universal"])
+    for key, value in itemp.items():
+        database[key] += value
+print("database after descriptions: ", database)
+
+
 
