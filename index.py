@@ -147,7 +147,58 @@ soup = BeautifulSoup(xml.content, 'lxml')
 xml_titles = soup.find_all('title')
 xml_descs = soup.find_all('description')
 
-database = {"universal":0}
+
+industry_vals = {"Automobile and Components": [["China", 31], ["Inflation", -35], ["Recession", -21]],
+             "Banks": [["Banks", 51], ["Interest rate", 17], ["Crypto", 15]],
+             "Capital Goods": [["China", 13], ["Inflation", -6]],
+             "Commercial and Professional Services": [["Recession", -24]],
+             "Consumer Durables and Apparel": [["China", 37],["Inflation", -15],["Recession", -41]],
+             "Consumer Services": [["Covid", -46],["Inflation", -20]],
+             "Diversified Financials": [["Inflation", 25], ["Interest rate", 27], ["Financial", 55],["Crypto", 21]],
+             "Energy": [["Inflation", 15], ["Recession", -33], ["Energy", 70]],
+             "Food, Beverage, and Tobacco": [["Inflation", 34]],
+             "Food and Staples Retailing": [["Inflation", 11], ["Interest rate", -19]],
+             "Healthcare Equipment and Services": [["Covid", 23], ["Inflation", 12]],
+             "Household and Personal Products": [["Inflation", 13]],
+             "Insurance": [["Inflation", 21], ["Interest rate", 25]],
+             "Materials": [["China", 14]],
+             "Media and Entertainment": [["Interest rate", 13]],
+             "Pharmaceuticals, Biotechnology, and Life Sciences": [["Covid", 10],["Inflation", 15]],
+             "Real Estate": [["Inflation", 17],["Recession", -31]],
+             "Retailing": [["Covid", -21]],
+             "Semiconductors and Semiconductor Equipment": [["China", 39]],
+             "Software and Services": [["Interest rate", -17]],
+             "Technology Hardware and Equipment": [["China", 41], ["Interest rate", -7]],
+             "Telecommunication Services": [["interest rate", 9]],
+             "Transportation": [["Gas", 75], ["Covid", -26], ["Energy", 20]],
+             "Utilities": [["interest rate", 12], ["energy", 10]]}
+
+database = {"universal":0, 
+            "Automobile and Components": 0,
+             "Banks": 0,
+             "Capital Goods": 0,
+             "Commercial and Professional Services": 0,
+             "Consumer Durables and Apparel": 0,
+             "Consumer Services": 0,
+             "Diversified Financials": 0,
+             "Energy": 0,
+             "Food, Beverage, and Tobacco": 0,
+             "Food and Staples Retailing": 0,
+             "Healthcare Equipment and Services": 0,
+             "Household and Personal Products": 0,
+             "Insurance": 0,
+             "Materials": 0,
+             "Media and Entertainment": 0,
+             "Pharmaceuticals, Biotechnology, and Life Sciences": 0,
+             "Real Estate": 0,
+             "Retailing": 0,
+             "Semiconductors and Semiconductor Equipment": 0,
+             "Software and Services": 0,
+             "Technology Hardware and Equipment": 0,
+             "Telecommunication Services": 0,
+             "Transportation": 0,
+             "Utilities": 0}
+
 
 #Looks at the text of each individual title tag and breaks it apart into a list of words
 #Filters words to exclude neutral words such as "and"
@@ -194,6 +245,4 @@ for desc in xml_descs:
     else:
         database['universal']+=1
 print("Universal val after descriptions: ", database["universal"])
-
-
 
