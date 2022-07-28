@@ -225,6 +225,19 @@ mentions = {"universal":0,
              "Transportation": 0,
              "Utilities": 0}
 
+def investing_percentages(database):
+    ret = database.copy()
+    ret["universal"] = 0
+    sum = 0
+    for key, value in ret.items():
+        if ret[key] < 0:
+            sum += ret[key]*-1
+        else:
+            sum += ret[key]
+    for key, value in ret.items():
+        ret[key] = round((ret[key]/sum)*100,1)
+    print("Percentages to invest: ", ret)
+
 
 #Looks at the text of each individual title tag and breaks it apart into a list of words
 #Filters words to exclude neutral words such as "and"
@@ -319,3 +332,5 @@ for key, val in database.items():
         database[key] = round(database[key]/mentions[key],2)
 
 print("Database after division: ", database)
+print("\n\n")
+investing_percentages(database)
