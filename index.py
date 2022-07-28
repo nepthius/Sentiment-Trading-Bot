@@ -199,6 +199,32 @@ database = {"universal":0,
              "Transportation": 0,
              "Utilities": 0}
 
+mentions = {"universal":0, 
+            "Automobile and Components": 0,
+             "Banks": 0,
+             "Capital Goods": 0,
+             "Commercial and Professional Services": 0,
+             "Consumer Durables and Apparel": 0,
+             "Consumer Services": 0,
+             "Diversified Financials": 0,
+             "Energy": 0,
+             "Food, Beverage, and Tobacco": 0,
+             "Food and Staples Retailing": 0,
+             "Healthcare Equipment and Services": 0,
+             "Household and Personal Products": 0,
+             "Insurance": 0,
+             "Materials": 0,
+             "Media and Entertainment": 0,
+             "Pharmaceuticals, Biotechnology, and Life Sciences": 0,
+             "Real Estate": 0,
+             "Retailing": 0,
+             "Semiconductors and Semiconductor Equipment": 0,
+             "Software and Services": 0,
+             "Technology Hardware and Equipment": 0,
+             "Telecommunication Services": 0,
+             "Transportation": 0,
+             "Utilities": 0}
+
 
 #Looks at the text of each individual title tag and breaks it apart into a list of words
 #Filters words to exclude neutral words such as "and"
@@ -223,8 +249,10 @@ for title in xml_titles:
                     if items[0] == word:
                         if key not in itemp.keys():
                             itemp[key] = items[1]
+                            mentions[key] += 1
                         else:
                             itemp[key] += items[1]
+                            mentions[key] += 1
     print(fwords)
     temp = sentiment_classify(fwords)
     print(temp)
@@ -266,8 +294,10 @@ for desc in xml_descs:
                     if items[0] == word:
                         if key not in itemp.keys():
                             itemp[key] = items[1]
+                            mentions[key] += 1
                         else:
                             itemp[key] += items[1]
+                            mentions[key] += 1
     print(fwords)
     temp = sentiment_classify(fwords)
     print(temp)
@@ -280,6 +310,12 @@ for desc in xml_descs:
     for key, value in itemp.items():
         database[key] += value
 print("database after descriptions: ", database)
+print("\n\n")
+print("Times mentioned: ", mentions)
+print("\n\n")
 
+for key, val in database.items():
+    if mentions[key] != 0:
+        database[key] = round(database[key]/mentions[key],2)
 
-
+print("Database after division: ", database)
