@@ -135,7 +135,7 @@ ps = PorterStemmer()
 #lemmatizing
 lemmatizer = WordNetLemmatizer()
 
-#saves a requests object into xml
+#saves a requests object into xml for the Economist
 url = 'https://www.economist.com/finance-and-economics/rss.xml'
 xml = requests.get(url)
 
@@ -143,10 +143,15 @@ xml = requests.get(url)
 soup = BeautifulSoup(xml.content, 'lxml') 
 #I believe this is an xml parser, but it doesn't recognize it as such for some reason
 
-#Creates list containing all titles and a list containing all descriptions
+#Creates list containing all Economist titles and a list containing all descriptions
 xml_titles = soup.find_all('title')
 xml_descs = soup.find_all('description')
 
+#CNBC URL and components
+url = "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=20910258"
+xml = requests.get(url)
+soup = BeautifulSoup(xml.content, 'lxml')
+CNBC_titles = soup.find_all('title')
 
 industry_vals = {"Automobile and Components": [["china", 31], ["inflation", -35], ["recession", -21]],
              "Banks": [["banks", 51], ["interest", 17], ["crypto", 15]],
@@ -199,6 +204,32 @@ database = {"universal":0,
              "Transportation": 0,
              "Utilities": 0}
 
+temp_database = {"universal":0, 
+            "Automobile and Components": 0,
+             "Banks": 0,
+             "Capital Goods": 0,
+             "Commercial and Professional Services": 0,
+             "Consumer Durables and Apparel": 0,
+             "Consumer Services": 0,
+             "Diversified Financials": 0,
+             "Energy": 0,
+             "Food, Beverage, and Tobacco": 0,
+             "Food and Staples Retailing": 0,
+             "Healthcare Equipment and Services": 0,
+             "Household and Personal Products": 0,
+             "Insurance": 0,
+             "Materials": 0,
+             "Media and Entertainment": 0,
+             "Pharmaceuticals, Biotechnology, and Life Sciences": 0,
+             "Real Estate": 0,
+             "Retailing": 0,
+             "Semiconductors and Semiconductor Equipment": 0,
+             "Software and Services": 0,
+             "Technology Hardware and Equipment": 0,
+             "Telecommunication Services": 0,
+             "Transportation": 0,
+             "Utilities": 0}
+
 mentions = {"universal":0, 
             "Automobile and Components": 0,
              "Banks": 0,
@@ -225,6 +256,33 @@ mentions = {"universal":0,
              "Transportation": 0,
              "Utilities": 0}
 
+temp_mentions = {"universal":0, 
+            "Automobile and Components": 0,
+             "Banks": 0,
+             "Capital Goods": 0,
+             "Commercial and Professional Services": 0,
+             "Consumer Durables and Apparel": 0,
+             "Consumer Services": 0,
+             "Diversified Financials": 0,
+             "Energy": 0,
+             "Food, Beverage, and Tobacco": 0,
+             "Food and Staples Retailing": 0,
+             "Healthcare Equipment and Services": 0,
+             "Household and Personal Products": 0,
+             "Insurance": 0,
+             "Materials": 0,
+             "Media and Entertainment": 0,
+             "Pharmaceuticals, Biotechnology, and Life Sciences": 0,
+             "Real Estate": 0,
+             "Retailing": 0,
+             "Semiconductors and Semiconductor Equipment": 0,
+             "Software and Services": 0,
+             "Technology Hardware and Equipment": 0,
+             "Telecommunication Services": 0,
+             "Transportation": 0,
+             "Utilities": 0}
+
+#returns percentages for investments
 def investing_percentages(database):
     ret = database.copy()
     ret["universal"] = 0
@@ -237,10 +295,69 @@ def investing_percentages(database):
     for key, value in ret.items():
         ret[key] = round((ret[key]/sum)*100,1)
     print("Percentages to invest: ", ret)
+    
+#resets the temporary mentions and temporary database dictionaries    
+def reset(database, mentions):
+    database = {"universal":0, 
+            "Automobile and Components": 0,
+             "Banks": 0,
+             "Capital Goods": 0,
+             "Commercial and Professional Services": 0,
+             "Consumer Durables and Apparel": 0,
+             "Consumer Services": 0,
+             "Diversified Financials": 0,
+             "Energy": 0,
+             "Food, Beverage, and Tobacco": 0,
+             "Food and Staples Retailing": 0,
+             "Healthcare Equipment and Services": 0,
+             "Household and Personal Products": 0,
+             "Insurance": 0,
+             "Materials": 0,
+             "Media and Entertainment": 0,
+             "Pharmaceuticals, Biotechnology, and Life Sciences": 0,
+             "Real Estate": 0,
+             "Retailing": 0,
+             "Semiconductors and Semiconductor Equipment": 0,
+             "Software and Services": 0,
+             "Technology Hardware and Equipment": 0,
+             "Telecommunication Services": 0,
+             "Transportation": 0,
+             "Utilities": 0}
+    mentions = {"universal":0, 
+            "Automobile and Components": 0,
+             "Banks": 0,
+             "Capital Goods": 0,
+             "Commercial and Professional Services": 0,
+             "Consumer Durables and Apparel": 0,
+             "Consumer Services": 0,
+             "Diversified Financials": 0,
+             "Energy": 0,
+             "Food, Beverage, and Tobacco": 0,
+             "Food and Staples Retailing": 0,
+             "Healthcare Equipment and Services": 0,
+             "Household and Personal Products": 0,
+             "Insurance": 0,
+             "Materials": 0,
+             "Media and Entertainment": 0,
+             "Pharmaceuticals, Biotechnology, and Life Sciences": 0,
+             "Real Estate": 0,
+             "Retailing": 0,
+             "Semiconductors and Semiconductor Equipment": 0,
+             "Software and Services": 0,
+             "Technology Hardware and Equipment": 0,
+             "Telecommunication Services": 0,
+             "Transportation": 0,
+             "Utilities": 0}
 
+    return database, mentions
+    
 
+    
+
+#The Economist
 #Looks at the text of each individual title tag and breaks it apart into a list of words
 #Filters words to exclude neutral words such as "and"
+print("--------Start of Economist--------")
 
 val = 0
 for title in xml_titles:
@@ -263,25 +380,30 @@ for title in xml_titles:
                         if key not in itemp.keys():
                             itemp[key] = items[1]
                             mentions[key] += 1
+                            temp_mentions[key] += 1
                         else:
                             itemp[key] += items[1]
                             mentions[key] += 1
-    print(fwords)
+                            temp_mentions[key] += 1
+    #print(fwords)
     temp = sentiment_classify(fwords)
-    print(temp)
+    #print(temp)
     if temp[0] == "neg":
         database["universal"]-=1
+        temp_database["universal"] -=1
         for key, value in itemp.items():
             itemp[key] *= -1
     else:
         database['universal']+=1
+        temp_database['universal'] += 1
     for key, value in itemp.items():
         database[key] += value
+        temp_database[key] += value
     #val +=1
     #if val == 1:
         #break
 
-print("before descriptions: ", database)
+print("before descriptions: ", temp_database)
     #print(fwords)
 #Used NLTK to split words instead of split so that words like "wasn't" are split into "was" and "n't" and other utilities
 print("\n\n\n")
@@ -308,20 +430,100 @@ for desc in xml_descs:
                         if key not in itemp.keys():
                             itemp[key] = items[1]
                             mentions[key] += 1
+                            temp_mentions[key] +=1
                         else:
                             itemp[key] += items[1]
                             mentions[key] += 1
-    print(fwords)
+                            temp_mentions[key] += 1
+    #print(fwords)
     temp = sentiment_classify(fwords)
-    print(temp)
+    #print(temp)
     if temp[0] == "neg":
         database["universal"]-=1
+        temp_database['universal'] -=1
         for key, value in itemp.items():
             itemp[key] *= -1
     else:
         database['universal']+=1
+        temp_database['universal'] +=1
     for key, value in itemp.items():
         database[key] += value
+        temp_database[key] += value
+print("database after descriptions: ", temp_database)
+print("\n\n")
+print("Times mentioned: ", temp_mentions)
+print("\n\n")
+
+for key, val in database.items():
+    if temp_mentions[key] != 0:
+        temp_database[key] = round(temp_database[key]/temp_mentions[key],2)
+
+print("Database after division: ", temp_database)
+print("\n\n")
+investing_percentages(temp_database)
+print("\n\n")
+
+
+temp_database, temp_mentions = reset(temp_database, temp_mentions)
+
+#print("after reset database: ", temp_database)
+#print("after reset mentions: ", temp_mentions)
+
+print("--------Start of CNBC--------")
+for title in CNBC_titles:
+    fwords = ""
+    t_words = word_tokenize(title.text)
+    
+    #print(title.text)
+    text = nltk.word_tokenize(title.text)
+    #print(text)
+    itemp = {}
+    for word in text:
+        if word not in stop_words:
+            fwords += " " + str((word.lower()))
+            word = word.lower()
+            for key, value in industry_vals.items():
+                for items in value:
+                    #print(items[0])
+                    #print(word)
+                    if items[0] == word:
+                        if key not in itemp.keys():
+                            itemp[key] = items[1]
+                            mentions[key] += 1
+                            temp_mentions[key] += 1
+                        else:
+                            itemp[key] += items[1]
+                            mentions[key] += 1
+                            temp_mentions[key] += 1
+    #print(fwords) prints words
+    temp = sentiment_classify(fwords)
+    #print(temp) prints sentiment
+    if temp[0] == "neg":
+        database["universal"]-=1
+        temp_database["universal"] -= 1
+        for key, value in itemp.items():
+            itemp[key] *= -1
+    else:
+        database['universal']+=1 
+        temp_database['universal'] += 1
+    for key, value in itemp.items():
+        database[key] += value
+        temp_database[key] += value
+        
+print("CNBC database after descriptions: ", temp_database)
+print("\n\n")
+print("Times mentioned in CNBC: ", temp_mentions)
+print("\n\n")
+
+for key, val in database.items():
+    if temp_mentions[key] != 0:
+        temp_database[key] = round(temp_database[key]/temp_mentions[key],2)
+print("\n\n")
+print("Investments for CNBC: ")
+investing_percentages(temp_database)
+print("\n\n")
+
+print("--------Start of Universal--------")
 print("database after descriptions: ", database)
 print("\n\n")
 print("Times mentioned: ", mentions)
@@ -333,4 +535,6 @@ for key, val in database.items():
 
 print("Database after division: ", database)
 print("\n\n")
+print("Investments from all articles: ")
 investing_percentages(database)
+
